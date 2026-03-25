@@ -47,14 +47,15 @@ function saveDB() {
 }
 function init() {
   loadDB();
-  setupDefaultTasks();
-  setupDefaultCeremony();
-  setupDefaultMusic();
   
   if (DB.firebaseConfig) {
     initFirebase();
   }
 
+  setupDefaultTasks();
+  setupDefaultCeremony();
+  setupDefaultMusic();
+  
   updateDashboard();
   renderGuests();
   renderExpenses();
@@ -830,7 +831,7 @@ function initFirebase() {
 }
 
 function syncToFirebase() {
-  if (!DB.isFirebaseActive || !window.firebase) return;
+  if (!DB.isFirebaseActive || !window.firebase || firebase.apps.length === 0) return;
   const db = firebase.firestore();
   
   // We only sync the dynamic lists that need to be shared
