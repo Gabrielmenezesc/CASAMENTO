@@ -22,8 +22,16 @@ const DB = {
   mapsUrl: '',
   ceremonyNotes: '',
   inviteText: '',
-  firebaseConfig: null,
-  isFirebaseActive: false,
+  firebaseConfig: {
+    apiKey: "AIzaSyCuFI7Hdlpjg6ygRxy-Kd2yf-XzSKZ9TdU",
+    authDomain: "casamentoannygabriel.firebaseapp.com",
+    projectId: "casamentoannygabriel",
+    storageBucket: "casamentoannygabriel.firebasestorage.app",
+    messagingSenderId: "490737829653",
+    appId: "1:490737829653:web:c415bf1262182011a9cb1c",
+    measurementId: "G-DF1G1W7S73"
+  },
+  isFirebaseActive: true,
 };
 
 // =========== INIT ===========
@@ -779,14 +787,7 @@ function saveFirebaseConfig() {
 function initFirebase() {
   if (!window.firebase || !DB.firebaseConfig) return;
 
-  const config = {
-    apiKey: DB.firebaseConfig.apiKey,
-    authDomain: `${DB.firebaseConfig.projectId}.firebaseapp.com`,
-    projectId: DB.firebaseConfig.projectId,
-    storageBucket: `${DB.firebaseConfig.projectId}.appspot.com`,
-    messagingSenderId: "wedding-app",
-    appId: DB.firebaseConfig.appId
-  };
+  const config = DB.firebaseConfig;
 
   try {
     firebase.initializeApp(config);
