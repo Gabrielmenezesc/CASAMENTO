@@ -15,7 +15,7 @@ const DB = {
   rsvpList: [],
   budget: 10000,
   weddingDate: '',
-  coupleName: 'Ana & Pedro',
+  coupleName: 'Anny e Gabriel',
   venue: '',
   weddingTime: '15:30',
   dresscode: 'Social',
@@ -622,7 +622,7 @@ function updateInvite() {
   DB.venue = venue; DB.dresscode = dresscode;
   saveDB();
 
-  setEl('g-couple-name', couple || 'Ana & Pedro');
+  setEl('g-couple-name', couple || 'Anny e Gabriel');
   setEl('g-wedding-date', date ? new Date(date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '— / — / —');
   setEl('g-wedding-time', time ? time + 'h' : '18:00h');
   setEl('g-wedding-venue', venue || 'Igreja e Salão de Festas');
