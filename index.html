@@ -307,6 +307,17 @@
         <textarea id="ceremony-notes" placeholder="Escreva aqui as observações, detalhes especiais, votos, etc..." rows="6" oninput="saveCeremonyNotes()"></textarea>
         <button class="btn-secondary" onclick="generateCeremonyText()">🤖 Gerar texto da cerimônia</button>
       </div>
+
+      <div class="glass section-card">
+        <h3>✏️ Personalizar Convite</h3>
+        <p class="section-desc">Altere os dados que os convidados verão no convite digital.</p>
+        <div class="form-group"><label>Nomes do Casal</label><input type="text" id="set-couple-name" placeholder="Anny e Gabriel" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Data do Casamento</label><input type="date" id="set-wedding-date" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Horário</label><input type="time" id="set-wedding-time" value="18:00" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Local / Endereço</label><input type="text" id="set-venue" placeholder="Rua, número - Cidade" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Dress Code</label><input type="text" id="set-dresscode" placeholder="Social, Casual, etc." oninput="updateInvite()" /></div>
+        <button class="btn-secondary" onclick="generateInviteText()">🤖 Gerar texto do convite</button>
+      </div>
     </div>
 
     <!-- ---- TAB: CHECKLIST ---- -->
@@ -339,6 +350,8 @@
       <div class="glass section-card">
         <div id="task-list" class="task-list"></div>
       </div>
+    </div>
+
     <!-- ---- TAB: CONFIG ---- -->
     <div id="tab-config" class="tab-content">
       <div class="page-header">
@@ -405,16 +418,6 @@
           <p class="dress-code">👔 Dress Code: Social</p>
         </div>
         <div class="invite-deco bot-deco">🌹</div>
-      </div>
-
-      <div class="glass section-card" style="margin-top:1rem">
-        <h3>✏️ Personalizar Convite (Noivos)</h3>
-        <div class="form-group"><label>Nomes do Casal</label><input type="text" id="set-couple-name" placeholder="Anny e Gabriel" oninput="updateInvite()" /></div>
-        <div class="form-group"><label>Data do Casamento</label><input type="date" id="set-wedding-date" oninput="updateInvite()" /></div>
-        <div class="form-group"><label>Horário</label><input type="time" id="set-wedding-time" value="18:00" oninput="updateInvite()" /></div>
-        <div class="form-group"><label>Local / Endereço</label><input type="text" id="set-venue" placeholder="Rua, número - Cidade" oninput="updateInvite()" /></div>
-        <div class="form-group"><label>Dress Code</label><input type="text" id="set-dresscode" placeholder="Social, Casual, etc." oninput="updateInvite()" /></div>
-        <button class="btn-secondary" onclick="generateInviteText()">🤖 Gerar texto do convite</button>
       </div>
     </div>
 
