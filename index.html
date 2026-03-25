@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💍 Wedding Planner — Organize seu Casamento</title>
+  <meta name="description" content="Aplicativo completo de planejamento de casamento. Área dos noivos e área dos convidados em um só lugar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== SPLASH / HOME ===== -->
+  <div id="splash" class="screen active">
+    <div class="splash-bg"></div>
+    <div class="splash-content">
+      <div class="rings-icon">💍</div>
+      <h1 class="splash-title">Wedding Planner</h1>
+      <p class="splash-subtitle">Organize o casamento dos seus sonhos</p>
+      <div class="splash-cards">
+        <button class="card-btn card-admin" onclick="goto('admin-login')">
+          <div class="card-icon">👰</div>
+          <div class="card-text">
+            <strong>Área dos Noivos</strong>
+            <span>Dashboard &amp; Planejamento</span>
+          </div>
+          <div class="card-arrow">›</div>
+        </button>
+        <button class="card-btn card-guest" onclick="goto('guest')">
+          <div class="card-icon">🎉</div>
+          <div class="card-text">
+            <strong>Área dos Convidados</strong>
+            <span>Convite &amp; Confirmação</span>
+          </div>
+          <div class="card-arrow">›</div>
+        </button>
+      </div>
+      <p class="splash-foot">✨ Por amor, com tecnologia</p>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN LOGIN ===== -->
+  <div id="admin-login" class="screen">
+    <div class="auth-bg"></div>
+    <div class="auth-card glass">
+      <button class="back-btn" onclick="goto('splash')">‹ Voltar</button>
+      <div class="auth-icon">🔐</div>
+      <h2>Acesso dos Noivos</h2>
+      <p class="auth-sub">Entre para gerenciar seu casamento</p>
+      <div class="form-group">
+        <label>Nome do Casal</label>
+        <input type="text" id="login-couple" placeholder="Ex: Ana & Pedro" />
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+      <button class="btn-primary" onclick="adminLogin()">Entrar 💒</button>
+      <p class="auth-hint">Senha padrão: <strong>casamento2025</strong></p>
+    </div>
+  </div>
+
+  <!-- ===== ADMIN AREA ===== -->
+  <div id="admin" class="screen">
+    <!-- Top bar -->
+    <div class="topbar glass">
+      <div class="topbar-left">
+        <span class="topbar-emoji">💍</span>
+        <span id="couple-name-display" class="topbar-title">Meu Casamento</span>
+      </div>
+      <button class="logout-btn" onclick="adminLogout()">Sair</button>
+    </div>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav glass">
+      <button class="nav-item active" onclick="showTab('dashboard')" id="nav-dashboard">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="showTab('guests')" id="nav-guests">
+        <span class="nav-icon">👥</span><span class="nav-label">Convidados</span>
+      </button>
+      <button class="nav-item" onclick="showTab('finance')" id="nav-finance">
+        <span class="nav-icon">💰</span><span class="nav-label">Finanças</span>
+      </button>
+      <button class="nav-item" onclick="showTab('shopping')" id="nav-shopping">
+        <span class="nav-icon">🛒</span><span class="nav-label">Compras</span>
+      </button>
+      <button class="nav-item" onclick="showTab('ceremony')" id="nav-ceremony">
+        <span class="nav-icon">💒</span><span class="nav-label">Cerimônia</span>
+      </button>
+      <button class="nav-item" onclick="showTab('checklist')" id="nav-checklist">
+        <span class="nav-icon">📋</span><span class="nav-label">Checklist</span>
+      </button>
+    </nav>
+
+    <!-- ---- TAB: DASHBOARD ---- -->
+    <div id="tab-dashboard" class="tab-content active">
+      <div class="page-header">
+        <h2>📊 Dashboard</h2>
+        <p>Visão geral do seu casamento</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card glass" style="--accent:#a855f7">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-guests">0</span>
+            <span class="stat-label">Convidados</span>
+          </div>
+        </div>
+        <div class="stat-card glass" style="--accent:#22d3ee">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-confirmed">0</span>
+            <span class="stat-label">Confirmados</span>
+          </div>
+        </div>
+        <div class="stat-card glass" style="--accent:#f59e0b">
+          <div class="stat-icon">💸</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-spent">R$ 0</span>
+            <span class="stat-label">Gasto</span>
+          </div>
+        </div>
+        <div class="stat-card glass" style="--accent:#10b981">
+          <div class="stat-icon">💰</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-remaining">R$ 10.000</span>
+            <span class="stat-label">Restante</span>
+          </div>
+        </div>
+        <div class="stat-card glass" style="--accent:#ef4444">
+          <div class="stat-icon">👤</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-per-person">R$ 0</span>
+            <span class="stat-label">Por pessoa</span>
+          </div>
+        </div>
+        <div class="stat-card glass" style="--accent:#ec4899">
+          <div class="stat-icon">📅</div>
+          <div class="stat-info">
+            <span class="stat-num" id="stat-days">—</span>
+            <span class="stat-label">Dias restantes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-section">
+        <div class="glass section-card">
+          <h3>📅 Data do Casamento</h3>
+          <input type="date" id="wedding-date" onchange="saveWeddingDate(this.value)" class="date-input" />
+        </div>
+      </div>
+
+      <div class="dashboard-section">
+        <div class="glass section-card">
+          <h3>📈 Orçamento vs Gasto</h3>
+          <div class="budget-bar-wrap">
+            <div class="budget-bar-track">
+              <div class="budget-bar-fill" id="budget-bar"></div>
+            </div>
+            <div class="budget-labels">
+              <span id="budget-label-spent">R$ 0 gasto</span>
+              <span id="budget-label-total">de R$ 10.000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-section">
+        <div class="glass section-card">
+          <h3>🤖 Sugestões da IA</h3>
+          <div id="ai-dashboard-tips" class="ai-tips-list"></div>
+          <button class="btn-secondary" onclick="generateAITips()">✨ Gerar novas sugestões</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- TAB: GUESTS ---- -->
+    <div id="tab-guests" class="tab-content">
+      <div class="page-header">
+        <h2>👥 Convidados</h2>
+        <p>Gerencie sua lista de convidados</p>
+      </div>
+      <div class="glass section-card">
+        <h3>Adicionar Convidado</h3>
+        <div class="add-guest-form">
+          <input type="text" id="guest-name" placeholder="Nome completo" />
+          <input type="tel" id="guest-phone" placeholder="WhatsApp (opcional)" />
+          <select id="guest-group">
+            <option value="Família">Família</option>
+            <option value="Amigos">Amigos</option>
+            <option value="Trabalho">Trabalho</option>
+            <option value="Igreja">Igreja</option>
+            <option value="Outros">Outros</option>
+          </select>
+          <button class="btn-primary" onclick="addGuest()">+ Adicionar</button>
+        </div>
+      </div>
+
+      <div class="glass section-card">
+        <div class="section-header">
+          <h3>Lista de Convidados</h3>
+          <input type="text" id="guest-search" placeholder="🔍 Buscar..." oninput="renderGuests()" class="search-input" />
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-btn active" onclick="filterGuests('all', this)">Todos</button>
+          <button class="filter-btn" onclick="filterGuests('confirmed', this)">✅ Confirmados</button>
+          <button class="filter-btn" onclick="filterGuests('pending', this)">⏳ Pendentes</button>
+        </div>
+        <div id="guest-list" class="guest-list"></div>
+      </div>
+    </div>
+
+    <!-- ---- TAB: FINANCE ---- -->
+    <div id="tab-finance" class="tab-content">
+      <div class="page-header">
+        <h2>💰 Controle Financeiro</h2>
+        <p>Gerencie seus gastos</p>
+      </div>
+
+      <div class="glass section-card">
+        <h3>Orçamento Total</h3>
+        <div class="budget-input-row">
+          <input type="number" id="total-budget" placeholder="10000" value="10000" oninput="saveBudget(this.value)" />
+          <label>R$</label>
+        </div>
+      </div>
+
+      <div class="glass section-card">
+        <h3>Adicionar Gasto</h3>
+        <div class="add-expense-form">
+          <select id="expense-cat">
+            <option value="Alimentação">🍽️ Alimentação</option>
+            <option value="Bebidas">🥤 Bebidas</option>
+            <option value="Trajes">👗 Trajes</option>
+            <option value="Estrutura">🏛️ Estrutura</option>
+            <option value="Serviços">📸 Serviços</option>
+            <option value="Decoração">💐 Decoração</option>
+            <option value="Outros">📦 Outros</option>
+          </select>
+          <input type="text" id="expense-desc" placeholder="Descrição" />
+          <input type="number" id="expense-value" placeholder="Valor (R$)" />
+          <button class="btn-primary" onclick="addExpense()">+ Adicionar</button>
+        </div>
+      </div>
+
+      <div class="glass section-card">
+        <h3>📊 Gastos por Categoria</h3>
+        <div id="expense-categories" class="cat-list"></div>
+      </div>
+
+      <div class="glass section-card">
+        <h3>📜 Histórico de Gastos</h3>
+        <div id="expense-list" class="expense-list"></div>
+      </div>
+    </div>
+
+    <!-- ---- TAB: SHOPPING ---- -->
+    <div id="tab-shopping" class="tab-content">
+      <div class="page-header">
+        <h2>🛒 Lista de Compras</h2>
+        <p>Gerada automaticamente por IA</p>
+      </div>
+      <div class="glass section-card">
+        <h3>🤖 Gerador Inteligente</h3>
+        <p class="section-desc">A lista é calculada automaticamente com base no número de convidados confirmados (<strong id="shopping-guest-count">0</strong>).</p>
+        <button class="btn-primary" onclick="generateShoppingList()">✨ Gerar / Atualizar Lista</button>
+      </div>
+      <div class="glass section-card">
+        <h3>Itens para Comprar</h3>
+        <div class="add-item-form">
+          <input type="text" id="shop-item-name" placeholder="Item personalizado" />
+          <input type="number" id="shop-item-qty" placeholder="Qtd" />
+          <input type="text" id="shop-item-unit" placeholder="Unidade" />
+          <button class="btn-secondary" onclick="addShopItem()">+ Adicionar</button>
+        </div>
+        <div id="shopping-list" class="shopping-list"></div>
+      </div>
+    </div>
+
+    <!-- ---- TAB: CEREMONY ---- -->
+    <div id="tab-ceremony" class="tab-content">
+      <div class="page-header">
+        <h2>💒 Cerimônia</h2>
+        <p>Planejamento do roteiro</p>
+      </div>
+      <div class="glass section-card">
+        <h3>📋 Roteiro da Cerimônia</h3>
+        <div id="ceremony-steps" class="ceremony-steps"></div>
+        <button class="btn-secondary" onclick="addCeremonyStep()">+ Adicionar Etapa</button>
+      </div>
+      <div class="glass section-card">
+        <h3>🎵 Sugestões de Músicas Gospel</h3>
+        <div class="music-list" id="music-list"></div>
+        <button class="btn-secondary" onclick="generateMoreMusic()">✨ Mais sugestões</button>
+      </div>
+      <div class="glass section-card">
+        <h3>📝 Roteiro Personalizado</h3>
+        <textarea id="ceremony-notes" placeholder="Escreva aqui as observações, detalhes especiais, votos, etc..." rows="6" oninput="saveCeremonyNotes()"></textarea>
+        <button class="btn-secondary" onclick="generateCeremonyText()">🤖 Gerar texto da cerimônia</button>
+      </div>
+    </div>
+
+    <!-- ---- TAB: CHECKLIST ---- -->
+    <div id="tab-checklist" class="tab-content">
+      <div class="page-header">
+        <h2>📋 Checklist</h2>
+        <p>Tarefas do casamento</p>
+      </div>
+      <div class="glass section-card">
+        <div class="checklist-header">
+          <h3>Progresso</h3>
+          <span id="checklist-progress-text">0 / 0 tarefas</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="checklist-bar"></div>
+        </div>
+      </div>
+      <div class="glass section-card">
+        <h3>Adicionar Tarefa</h3>
+        <div class="add-task-form">
+          <input type="text" id="task-text" placeholder="Nova tarefa..." />
+          <select id="task-cat">
+            <option value="Essencial">🔴 Essencial</option>
+            <option value="Importante">🟡 Importante</option>
+            <option value="Opcional">🟢 Opcional</option>
+          </select>
+          <button class="btn-primary" onclick="addTask()">+ Adicionar</button>
+        </div>
+      </div>
+      <div class="glass section-card">
+        <div id="task-list" class="task-list"></div>
+      </div>
+    </div>
+
+  </div><!-- /admin -->
+
+  <!-- ===== GUEST AREA ===== -->
+  <div id="guest" class="screen">
+    <div class="guest-bg"></div>
+
+    <!-- Guest nav -->
+    <nav class="bottom-nav glass">
+      <button class="nav-item active" onclick="showGuestTab('invite')" id="gnav-invite">
+        <span class="nav-icon">💌</span><span class="nav-label">Convite</span>
+      </button>
+      <button class="nav-item" onclick="showGuestTab('rsvp')" id="gnav-rsvp">
+        <span class="nav-icon">✅</span><span class="nav-label">Confirmar</span>
+      </button>
+      <button class="nav-item" onclick="showGuestTab('info')" id="gnav-info">
+        <span class="nav-icon">📍</span><span class="nav-label">Local</span>
+      </button>
+      <button class="nav-item" onclick="showGuestTab('msg')" id="gnav-msg">
+        <span class="nav-icon">💬</span><span class="nav-label">Mensagem</span>
+      </button>
+    </nav>
+    <div class="guest-back-btn">
+      <button class="back-btn" onclick="goto('splash')">‹ Início</button>
+    </div>
+
+    <!-- Guest tab: Invite -->
+    <div id="gtab-invite" class="tab-content active">
+      <div class="invite-card glass-gold">
+        <div class="invite-deco top-deco">💐</div>
+        <p class="invite-subtitle">Com alegria, convidamos você para celebrar</p>
+        <h1 class="invite-names" id="g-couple-name">Ana &amp; Pedro</h1>
+        <div class="invite-divider">♡</div>
+        <p class="invite-date-label">Data</p>
+        <p class="invite-date" id="g-wedding-date">— / — / —</p>
+        <p class="invite-time-label">Horário</p>
+        <p class="invite-time" id="g-wedding-time">18:00h</p>
+        <p class="invite-local-label">Local</p>
+        <p class="invite-local" id="g-wedding-venue">Igreja e Salão de Festas</p>
+        <div class="invite-footer">
+          <p class="dress-code">👔 Dress Code: Social</p>
+        </div>
+        <div class="invite-deco bot-deco">🌹</div>
+      </div>
+
+      <div class="glass section-card" style="margin-top:1rem">
+        <h3>✏️ Personalizar Convite (Noivos)</h3>
+        <div class="form-group"><label>Nomes do Casal</label><input type="text" id="set-couple-name" placeholder="Ana &amp; Pedro" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Data do Casamento</label><input type="date" id="set-wedding-date" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Horário</label><input type="time" id="set-wedding-time" value="18:00" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Local / Endereço</label><input type="text" id="set-venue" placeholder="Rua, número - Cidade" oninput="updateInvite()" /></div>
+        <div class="form-group"><label>Dress Code</label><input type="text" id="set-dresscode" placeholder="Social, Casual, etc." oninput="updateInvite()" /></div>
+        <button class="btn-secondary" onclick="generateInviteText()">🤖 Gerar texto do convite</button>
+      </div>
+    </div>
+
+    <!-- Guest tab: RSVP -->
+    <div id="gtab-rsvp" class="tab-content">
+      <div class="page-header">
+        <h2>✅ Confirmação de Presença</h2>
+        <p>Por favor, confirme sua presença</p>
+      </div>
+      <div class="glass section-card rsvp-card">
+        <div class="form-group">
+          <label>Seu nome</label>
+          <input type="text" id="rsvp-name" placeholder="Nome completo" />
+        </div>
+        <div class="form-group">
+          <label>Quantas pessoas virão com você?</label>
+          <input type="number" id="rsvp-companions" value="0" min="0" max="10" />
+        </div>
+        <div class="rsvp-buttons">
+          <button class="btn-confirm" onclick="rsvp('yes')">✅ Vou comparecer!</button>
+          <button class="btn-decline" onclick="rsvp('no')">❌ Não poderei ir</button>
+        </div>
+        <div id="rsvp-feedback" class="rsvp-feedback"></div>
+      </div>
+      <div class="glass section-card">
+        <h3>📋 Lista de Confirmados</h3>
+        <div id="guest-rsvp-list" class="rsvp-list"></div>
+      </div>
+    </div>
+
+    <!-- Guest tab: Info -->
+    <div id="gtab-info" class="tab-content">
+      <div class="page-header">
+        <h2>📍 Informações do Evento</h2>
+      </div>
+      <div class="glass section-card">
+        <h3>🗺️ Local do Evento</h3>
+        <div class="event-info-row"><span>📍</span><span id="info-venue">—</span></div>
+        <div class="event-info-row"><span>🕐</span><span id="info-time">—</span></div>
+        <div class="event-info-row"><span>📅</span><span id="info-date">—</span></div>
+        <div class="event-info-row"><span>👔</span><span id="info-dresscode">—</span></div>
+        <div class="map-container">
+          <iframe id="map-iframe"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1!2d-46.63!3d-23.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzAwLjAiUyA0NsKwMzgnMDAuMCJX!5e0!3m2!1spt-BR!2sbr!4v1234567890"
+            width="100%" height="250" style="border:0;border-radius:12px" allowfullscreen="" loading="lazy">
+          </iframe>
+        </div>
+        <div class="form-group">
+          <label>🔗 Link do Google Maps (para noivos)</label>
+          <input type="text" id="set-maps-url" placeholder="URL do Google Maps Embed" oninput="updateMap()" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Guest tab: Message -->
+    <div id="gtab-msg" class="tab-content">
+      <div class="page-header">
+        <h2>💬 Mensagem para os Noivos</h2>
+        <p>Deixe um recado especial 💕</p>
+      </div>
+      <div class="glass section-card">
+        <div class="form-group">
+          <label>Seu nome</label>
+          <input type="text" id="msg-name" placeholder="Seu nome" />
+        </div>
+        <div class="form-group">
+          <label>Sua mensagem</label>
+          <textarea id="msg-text" placeholder="Escreva seu recado para os noivos..." rows="5"></textarea>
+        </div>
+        <button class="btn-primary" onclick="sendMessage()">💌 Enviar mensagem</button>
+        <div id="msg-feedback" class="msg-feedback"></div>
+      </div>
+      <div class="glass section-card">
+        <h3>💕 Mensagens Recebidas</h3>
+        <div id="messages-list" class="messages-list"></div>
+      </div>
+    </div>
+
+  </div><!-- /guest -->
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
