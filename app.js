@@ -15,8 +15,8 @@ const DB = {
   rsvpList: [],
   budget: 10000,
   weddingDate: '',
-  coupleName: 'Anny e Gabriel',
-  venue: '',
+  coupleName: 'Gabriel e Anny',
+  venue: 'Gama - DF',
   weddingTime: '15:30',
   dresscode: 'Social',
   mapsUrl: '',
@@ -137,7 +137,7 @@ function adminLogin() {
   const couple = document.getElementById('login-couple').value.trim();
   const pass = document.getElementById('login-pass').value.trim();
   if (!couple) { toast('⚠️ Informe o nome do casal'); return; }
-  if (pass !== 'casamento2025') { toast('❌ Senha incorreta'); return; }
+  if (pass !== '@casamento2027') { toast('❌ Senha incorreta'); return; }
   DB.coupleName = couple;
   saveDB();
   document.getElementById('couple-name-display').innerText = couple;
@@ -641,10 +641,10 @@ function updateInvite() {
   DB.venue = venue; DB.dresscode = dresscode;
   saveDB();
 
-  setEl('g-couple-name', couple || 'Anny e Gabriel');
+  setEl('g-couple-name', couple || 'Gabriel e Anny');
   setEl('g-wedding-date', date ? new Date(date + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : '— / — / —');
   setEl('g-wedding-time', time ? time + 'h' : '18:00h');
-  setEl('g-wedding-venue', venue || 'Igreja e Salão de Festas');
+  setEl('g-wedding-venue', venue || 'Gama - DF');
   const dcEl = document.querySelector('.dress-code');
   if (dcEl) dcEl.innerText = '👔 Dress Code: ' + (dresscode || 'Social');
 
@@ -709,7 +709,7 @@ function rsvp(status) {
 
 function notifyWhatsApp(name, companions) {
   const phone = "5538991621135";
-  const msg = `Olá Anny e Gabriel! Acabei de confirmar minha presença no casamento! 💍\n\nConvidado: ${name}\nAcompanhantes: ${companions}\n\nMal podemos esperar! ❤️`;
+  const msg = `Olá Gabriel e Anny! Acabei de confirmar minha presença no casamento! 💍\n\nConvidado: ${name}\nAcompanhantes: ${companions}\n\nMal podemos esperar! ❤️`;
   const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
 }
