@@ -768,7 +768,7 @@ function saveFirebaseConfig() {
     return;
   }
 
-  DB.firebaseConfig = { apiKey, projectId, appId };
+  DB.firebaseConfig = { apiKey, projectId: projectId || "casamentoannygabriel-cffcf", appId };
   DB.isFirebaseActive = true;
   saveDB();
   
