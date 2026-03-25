@@ -22,6 +22,8 @@ const DB = {
   mapsUrl: '',
   ceremonyNotes: '',
   inviteText: '',
+  firebaseConfig: null,
+  isFirebaseActive: false,
 };
 
 // =========== INIT ===========
@@ -31,12 +33,20 @@ function loadDB() {
 }
 function saveDB() {
   localStorage.setItem('weddingPlanner', JSON.stringify(DB));
+  if (DB.isFirebaseActive) {
+    syncToFirebase();
+  }
 }
 function init() {
   loadDB();
   setupDefaultTasks();
   setupDefaultCeremony();
   setupDefaultMusic();
+  
+  if (DB.firebaseConfig) {
+    initFirebase();
+  }
+
   updateDashboard();
   renderGuests();
   renderExpenses();
@@ -672,13 +682,27 @@ function rsvp(status) {
 
   const fb = document.getElementById('rsvp-feedback');
   if (status === 'yes') {
-    fb.innerHTML = `<span style="color:#10b981">🎉 Presença confirmada! Esperamos por você, ${name}!</span>`;
+    fb.innerHTML = `
+      <div style="color:#10b981; margin-bottom:1rem;">🎉 Presença confirmada! Esperamos por você, ${name}!</div>
+      <button class="btn-primary" onclick="notifyWhatsApp('${name}', ${companions})" style="background:#25D366; box-shadow:0 4px 14px rgba(37,211,102,0.4)">
+        📱 Avisar Noivos no WhatsApp
+      </button>
+    `;
+    // Auto-open WhatsApp after a short delay
+    setTimeout(() => notifyWhatsApp(name, companions), 1500);
   } else {
     fb.innerHTML = `<span style="color:#f59e0b">😢 Tudo bem! Sua ausência foi registrada, ${name}.</span>`;
   }
   document.getElementById('rsvp-name').value = '';
   renderRsvpList();
   updateDashboard();
+}
+
+function notifyWhatsApp(name, companions) {
+  const phone = "5538991621135";
+  const msg = `Olá Anny e Gabriel! Acabei de confirmar minha presença no casamento! 💍\n\nConvidado: ${name}\nAcompanhantes: ${companions}\n\nMal podemos esperar! ❤️`;
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
 }
 
 function renderRsvpList() {
@@ -731,6 +755,95 @@ function renderMessages() {
       <div class="msg-time">${m.time}</div>
     </div>
   `).join('');
+}
+
+// =========== FIREBASE CLOUD SYNC ===========
+function saveFirebaseConfig() {
+  const apiKey = document.getElementById('fb-api-key').value.trim();
+  const projectId = document.getElementById('fb-project-id').value.trim();
+  const appId = document.getElementById('fb-app-id').value.trim();
+
+  if (!apiKey || !projectId || !appId) {
+    toast('⚠️ Preencha todos os campos do Firebase');
+    return;
+  }
+
+  DB.firebaseConfig = { apiKey, projectId, appId };
+  DB.isFirebaseActive = true;
+  saveDB();
+  
+  document.getElementById('fb-status').innerHTML = '⏳ Inicializando Firebase...';
+  setTimeout(() => location.reload(), 1500);
+}
+
+function initFirebase() {
+  if (!window.firebase || !DB.firebaseConfig) return;
+
+  const config = {
+    apiKey: DB.firebaseConfig.apiKey,
+    authDomain: `${DB.firebaseConfig.projectId}.firebaseapp.com`,
+    projectId: DB.firebaseConfig.projectId,
+    storageBucket: `${DB.firebaseConfig.projectId}.appspot.com`,
+    messagingSenderId: "wedding-app",
+    appId: DB.firebaseConfig.appId
+  };
+
+  try {
+    firebase.initializeApp(config);
+    const db = firebase.firestore();
+    DB.isFirebaseActive = true;
+    
+    // Status UI
+    const statusEl = document.getElementById('fb-status');
+    if (statusEl) statusEl.innerHTML = '<span style="color:#10b981">✅ Cloud Ativo e Sincronizado</span>';
+
+    // Real-time listener for the whole DB
+    db.collection('weddings').doc(DB.firebaseConfig.projectId).onSnapshot((doc) => {
+      if (doc.exists) {
+        const cloudData = doc.data();
+        // Merge cloud data into local DB (prioritizing cloud for shared lists)
+        DB.guests = cloudData.guests || DB.guests;
+        DB.messages = cloudData.messages || DB.messages;
+        DB.rsvpList = cloudData.rsvpList || DB.rsvpList;
+        DB.tasks = cloudData.tasks || DB.tasks;
+        DB.expenses = cloudData.expenses || DB.expenses;
+        
+        // Re-render affected parts
+        renderGuests();
+        renderMessages();
+        renderRsvpList();
+        renderTasks();
+        renderExpenses();
+        updateDashboard();
+      } else {
+        // First time setup on cloud
+        syncToFirebase();
+      }
+    });
+  } catch (err) {
+    console.error("Firebase error:", err);
+    if (document.getElementById('fb-status')) {
+      document.getElementById('fb-status').innerHTML = '<span style="color:#ef4444">❌ Erro ao conectar ao Firebase</span>';
+    }
+  }
+}
+
+function syncToFirebase() {
+  if (!DB.isFirebaseActive || !window.firebase) return;
+  const db = firebase.firestore();
+  
+  // We only sync the dynamic lists that need to be shared
+  const sharedData = {
+    guests: DB.guests,
+    messages: DB.messages,
+    rsvpList: DB.rsvpList,
+    tasks: DB.tasks,
+    expenses: DB.expenses,
+    lastUpdate: new Date().getTime()
+  };
+
+  db.collection('weddings').doc(DB.firebaseConfig.projectId).set(sharedData, { merge: true })
+    .catch(err => console.error("Cloud sync error:", err));
 }
 
 // =========== BOOT ===========
